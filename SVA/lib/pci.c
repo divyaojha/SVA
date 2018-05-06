@@ -1,5 +1,7 @@
 #include "sva/state.h"
 
+int hotplug;
+
 static __inline void
 outb(u_int port, u_char data)
 {
@@ -42,7 +44,7 @@ void sva_iowrite(int port, int data, int bytes){
 	}
 	}else{
 		/*TBD*/
-		/*io write for rempaped mem*/;	
+		/*iowrite for rempaped mem*/;	
 	}
 }
 
@@ -52,9 +54,17 @@ void sva_pci_write(int bus, int slot, int func, int reg, int data, int bytes){
        int port;
 
 /*TBD*/
-/*if bus, device, fn is for router and the hotplug variable is not set, return*/
+/*hotplug variable to be set and reset at the start and end of interrupt service
+/*Get bus, slot, func, reg on server for 
+  TAD = bus 1, device 19-22, func 0, offset 0x80-0xac
+  SAD = bus 0, device 5, func 0, offset 0x148
+*/
+routine for RAM hotplug interrupt*/
 
-        if (bus <= PCI_BUSMAX && slot <= PCI_SLOTMAX && func <= PCI_FUNCMAX &&
+	if(bus==0 && slot==6 && func==0 && reg==8 && !hotplug){
+		printf("I am not allowing any pikit******************:)\n");
+		return;
+	} else if(bus <= PCI_BUSMAX && slot <= PCI_SLOTMAX && func <= PCI_FUNCMAX &&
             (unsigned)reg <= PCI_REGMAX && bytes != 3 &&
             (unsigned)bytes <= 4 && (reg & (bytes - 1)) == 0) {
                 outl(CONF1_ADDR_PORT, (1 << 31) | (bus << 16) | (slot << 11)
