@@ -53,8 +53,12 @@ void sva_pci_write(int bus, int slot, int func, int reg, int data, int bytes){
 
 /*TBD*/
 /*if bus, device, fn is for router and the hotplug variable is not set, return*/
+/*correct if condition for device and interrupt*/
 
-        if (bus <= PCI_BUSMAX && slot <= PCI_SLOTMAX && func <= PCI_FUNCMAX &&
+	if(bus==0 && slot==6 && func==0 && reg==8){
+		printf("I am not allowing any pikit******************:)\n");
+		return;
+	} else if(bus <= PCI_BUSMAX && slot <= PCI_SLOTMAX && func <= PCI_FUNCMAX &&
             (unsigned)reg <= PCI_REGMAX && bytes != 3 &&
             (unsigned)bytes <= 4 && (reg & (bytes - 1)) == 0) {
                 outl(CONF1_ADDR_PORT, (1 << 31) | (bus << 16) | (slot << 11)
