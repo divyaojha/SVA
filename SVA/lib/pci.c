@@ -59,7 +59,6 @@ void sva_pci_write(int bus, int slot, int func, int reg, int data, int bytes){
   TAD = bus 1, device 19-22, func 0, offset 0x80-0xac
   SAD = bus 0, device 5, func 0, offset 0x148
 */
-routine for RAM hotplug interrupt*/
 
 	if(bus==0 && slot==6 && func==0 && reg==8 && !hotplug){
 		printf("I am not allowing any pikit******************:)\n");
