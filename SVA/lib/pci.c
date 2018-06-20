@@ -1,6 +1,5 @@
+#include <sys/cdefs.h>
 #include "sva/state.h"
-
-int hotplug;
 
 static __inline void
 outb(u_int port, u_char data)
@@ -26,11 +25,31 @@ outw(u_int port, u_short data)
 #define PCI_FUNCMAX     7       /* highest supported function number */
 #define PCI_REGMAX      255     /* highest supported config register addr. */
 
-void sva_iowrite(int port, int data, int bytes){
+void sva_iowrite(int port, int data, int type){
+
+	unsigned bus;
+	unsigned slot;
+	unsigned func;
+	unsigned reg;
+	
+	int temp_port = port;
+
         
 	if(port <= 0xffff){
+	reg = temp_port & 0xFF;
+	func = (temp_port >> 8) & 0x7;
+	slot = (temp_port >> 3) & 0x1FF;
+	bus = (temp_port >> 5) & 0xFF;
+	if ((slot == 15) && (func == 4) && (reg >=0x60) && (reg <=0xFC)){ /*SAD*/
+		return;
+	}
+	if ((slot >= 19) && (slot <= 22) && (func == 0) && (reg >=0x80) && (reg <=0xAC)){ /*TAD*/
+		return;
+	}
+	
+  
 	if (port != 0) {
-                switch (bytes) {
+                switch (type) {
                 case 1:
                         outb(port, data);
                         break;
@@ -40,6 +59,19 @@ void sva_iowrite(int port, int data, int bytes){
                 case 4:
                         outl(port, data);
                         break;
+/*		case 5:
+			outsb(port, data);
+			break;
+		case 6:
+			outsw(port, data);
+			break;
+		case 7:
+			outsl(port, data);
+			break;
+*/
+/* TBD string IO*/
+		default:
+			break;
                 }
 	}
 	}else{
@@ -48,6 +80,7 @@ void sva_iowrite(int port, int data, int bytes){
 	}
 }
 
+#if 0
 void sva_pci_write(int bus, int slot, int func, int reg, int data, int bytes){
 
         int dataport = 0;
@@ -56,8 +89,6 @@ void sva_pci_write(int bus, int slot, int func, int reg, int data, int bytes){
 /*TBD*/
 /*hotplug variable to be set and reset at the start and end of interrupt service
 /*Get bus, slot, func, reg on server for 
-  TAD = bus 1, device 19-22, func 0, offset 0x80-0xac
-  SAD = bus 0, device 5, func 0, offset 0x148
 */
 
 	if(bus==0 && slot==6 && func==0 && reg==8 && !hotplug){
@@ -74,3 +105,4 @@ void sva_pci_write(int bus, int slot, int func, int reg, int data, int bytes){
 
 	sva_iowrite(port, data, bytes);
 }
+#endif
