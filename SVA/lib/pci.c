@@ -30,10 +30,10 @@ static const unsigned int PCI_REGMAX = 255;     /* highest supported config regi
  * Intrinsic: sva_iowrite()
  *
  * Descrption:
- *  This intrinsic permits the system system software to write
- *  to an IO port or memory mapped IO.
+ * This intrinsic permits the system system software to write
+ * to an IO port or memory mapped IO.
  *  
- *  Note: write to memory mapped IO needs implementation 
+ * Note: write to memory mapped IO needs implementation 
  */
 void sva_iowrite(int port, int data, int type){
 
@@ -58,10 +58,13 @@ void sva_iowrite(int port, int data, int type){
 		 * doing any IO write operation. We check if
 		 * the write request is to the IO ports assigned   
 		 * to Source Address Decoder (SAD) or Target 
-		 * Address Decoder (TAD). Writing to these ports 
-		 * can reconfigure the DRAM mapping available on 
-		 * a server, which in turn can allow illegal 
-		 * access into memory regions.
+		 * Address Decoder (TAD) on Intel Xeon E5 or E7.
+		 * Writing to these ports can reconfigure the DRAM 
+		 * mapping available on a server, which in turn can 
+		 * allow illegal access into memory regions. 
+		 * 
+		 * Refs - "Physical Address Decoding in Intel Xeon  
+		 * v3/v4 CPUs: A Supplemental Datasheet"
 		 */
 	 	
 		if ((slot == 15) && (func == 4) && (reg >=0x60) && (reg <=0xFC)) { /*SAD*/
@@ -72,21 +75,21 @@ void sva_iowrite(int port, int data, int type){
 		}
   
 		if (port != 0) {
-		  switch (type) {
-    		case 1:
-      		outb(port, data);
-        	break;
-      	case 2:
-      		outw(port, data);
-        	break;
-      	case 4:
-      		outl(port, data);
-      		break;
+    	switch (type) {
+      	case 1:
+        	outb(port, data);
+          break;
+        case 2:
+        	outw(port, data);
+          break;
+        case 4:
+        	outl(port, data);
+          break;
 				default:
 					break;
 			}
 		}
-	}	else {
+	} else {
 		/*TBD*/
 		/*iowrite for rempaped mem*/;	
 	}
