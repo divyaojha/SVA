@@ -30,10 +30,10 @@ static const unsigned int PCI_REGMAX = 255;     /* highest supported config regi
  * Intrinsic: sva_iowrite()
  *
  * Descrption:
- *  This intrinsic permits the system system software to write
- *  to an IO port or memory mapped IO.
+ * This intrinsic permits the system system software to write
+ * to an IO port or memory mapped IO.
  *  
- *  Note: write to memory mapped IO needs implementation 
+ * Note: write to memory mapped IO needs implementation 
  */
 void sva_iowrite(int port, int data, int type){
 
@@ -72,21 +72,21 @@ void sva_iowrite(int port, int data, int type){
 		}
   
 		if (port != 0) {
-		  switch (type) {
-    		case 1:
-      		outb(port, data);
-        	break;
-      	case 2:
-      		outw(port, data);
-        	break;
-      	case 4:
-      		outl(port, data);
-      		break;
+    	switch (type) {
+      	case 1:
+        	outb(port, data);
+          break;
+        case 2:
+        	outw(port, data);
+          break;
+        case 4:
+        	outl(port, data);
+          break;
 				default:
 					break;
 			}
 		}
-	}	else {
+	}else{
 		/*TBD*/
 		/*iowrite for rempaped mem*/;	
 	}
